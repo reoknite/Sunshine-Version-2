@@ -1,9 +1,11 @@
 package com.example.android.sunshine.app;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -47,17 +49,14 @@ public class ForecastFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_forecast, container, false);
 
-        ArrayList<String> forecasts = new ArrayList<>();
-
         mForecastAdapter = new ArrayAdapter<>(
                 getActivity(),
                 R.layout.list_item_forecast,
                 R.id.list_item_forecast_textview,
-                forecasts);
+                new ArrayList<String>());
 
         ListView mForecastListView = (ListView) rootView.findViewById(R.id.listview_forecast);
         mForecastListView.setAdapter(mForecastAdapter);
-        fetchWeather();
 
         mForecastListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -70,6 +69,12 @@ public class ForecastFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        fetchWeather();
     }
 
     @Override
@@ -92,7 +97,10 @@ public class ForecastFragment extends Fragment {
 
     private void fetchWeather() {
         FetchWeatherTask fetchWeatherTask = new FetchWeatherTask();
-        fetchWeatherTask.execute("23059,us");
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String location = settings.getString(getString(R.string.pref_location_key),
+                getString(R.string.pref_location_default));
+        fetchWeatherTask.execute(location);
     }
 
     public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
