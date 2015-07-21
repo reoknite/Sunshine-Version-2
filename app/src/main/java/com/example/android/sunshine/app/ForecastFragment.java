@@ -1,5 +1,6 @@
 package com.example.android.sunshine.app;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,8 +15,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONException;
 
@@ -46,8 +45,7 @@ public class ForecastFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
+        View rootView = inflater.inflate(R.layout.fragment_forecast, container, false);
 
         ArrayList<String> forecasts = new ArrayList<>();
 
@@ -64,8 +62,10 @@ public class ForecastFragment extends Fragment {
         mForecastListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String w = ((TextView) view).getText().toString();
-                Toast.makeText(getActivity(), w, Toast.LENGTH_LONG).show();
+                String forecast = mForecastAdapter.getItem(position);
+                Intent openDetail = new Intent(getActivity(), DetailActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT, forecast);
+                startActivity(openDetail);
             }
         });
 
