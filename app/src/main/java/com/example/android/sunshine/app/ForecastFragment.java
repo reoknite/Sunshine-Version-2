@@ -100,7 +100,9 @@ public class ForecastFragment extends Fragment {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String location = settings.getString(getString(R.string.pref_location_key),
                 getString(R.string.pref_location_default));
-        fetchWeatherTask.execute(location);
+        String outputUnits = settings.getString(getString(R.string.pref_units_key),
+                getString(R.string.pref_units_default));
+        fetchWeatherTask.execute(location, outputUnits);
     }
 
     public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
@@ -127,7 +129,7 @@ public class ForecastFragment extends Fragment {
 
             String zip = params[0];
             String format = "json";
-            String units = "metric";
+            String units = "metric"; // always query in metrics (convert to F internally)
             int dayCount = 7;
 
             try {
@@ -195,7 +197,8 @@ public class ForecastFragment extends Fragment {
             }
             String[] weatherForecasts = null;
             try {
-                weatherForecasts = WeatherDataParser.getWeatherDataFromJson(forecastJsonStr, dayCount);
+                String outputUnits = params[1];
+                weatherForecasts = WeatherDataParser.getWeatherDataFromJson(forecastJsonStr, outputUnits, dayCount);
             } catch (JSONException e) {
                 Log.e(LOG_TAG, "Error parsing json", e);
             }

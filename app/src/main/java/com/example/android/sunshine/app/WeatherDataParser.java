@@ -46,13 +46,23 @@ public class WeatherDataParser {
     }
 
     /**
+     * Convert to fahrenheit.
+     *
+     * @param temperature in celsius
+     * @return temperature in fahrenheit.
+     */
+    private static double toFahrenheit(double temperature) {
+        return (temperature * 9 / 5) + 32;
+    }
+
+    /**
      * Take the String representing the complete forecast in JSON Format and
      * pull out the data we need to construct the Strings needed for the wireframes.
      * <p/>
      * Fortunately parsing is easy:  constructor takes the JSON string and converts it
      * into an Object hierarchy for us.
      */
-    public static String[] getWeatherDataFromJson(String forecastJsonStr, int numDays)
+    public static String[] getWeatherDataFromJson(String forecastJsonStr, String outputUnits, int numDays)
             throws JSONException {
 
         // These are the names of the JSON objects that need to be extracted.
@@ -110,6 +120,11 @@ public class WeatherDataParser {
             JSONObject temperatureObject = dayForecast.getJSONObject(OWM_TEMPERATURE);
             double high = temperatureObject.getDouble(OWM_MAX);
             double low = temperatureObject.getDouble(OWM_MIN);
+
+            if (outputUnits.equals("fahrenheit")) {
+                high = toFahrenheit(high);
+                low = toFahrenheit(low);
+            }
 
             highAndLow = formatHighLows(high, low);
             resultStrs[i] = day + " - " + description + " - " + highAndLow;
