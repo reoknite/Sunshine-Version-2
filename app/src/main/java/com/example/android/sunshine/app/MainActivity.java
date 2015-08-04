@@ -1,10 +1,8 @@
 package com.example.android.sunshine.app;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -47,9 +45,7 @@ public class MainActivity extends ActionBarActivity {
             final String BASIC_GEO_PATH = "geo:0,0";
             final String QUERY_PARAM = "q";
 
-            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-            String location = settings.getString(getString(R.string.pref_location_key),
-                    getString(R.string.pref_location_default));
+            String location = Utility.getPreferredLocation(this);
 
             Uri locationUri = Uri.parse(BASIC_GEO_PATH).buildUpon()
                     .appendQueryParameter(QUERY_PARAM, location)
