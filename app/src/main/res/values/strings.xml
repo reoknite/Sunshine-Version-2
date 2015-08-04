@@ -23,6 +23,8 @@
     <string name="pref_units_label">Units</string>
     <string name="pref_units_dialog">Choose temperature unit.</string>
     <string name="pref_units_default" translatable="false">celsius</string>
+    <string name="pref_units_metric">C</string>
+    <string name="pref_units_imperial">F</string>
 
     <array name="pref_units_entries">
         <item>Celsius</item>
