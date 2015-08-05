@@ -75,6 +75,7 @@ public class DetailActivity extends ActionBarActivity {
 
         private ShareActionProvider mShareActionProvider;
         private Intent mIntent;
+        private String mForecastStr;
 
         public DetailFragment() {
         }
@@ -86,10 +87,13 @@ public class DetailActivity extends ActionBarActivity {
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
             mIntent = getActivity().getIntent();
-            if (mIntent != null && mIntent.hasExtra(Intent.EXTRA_TEXT)) {
-                String forecast = mIntent.getStringExtra(Intent.EXTRA_TEXT);
+            if (mIntent != null) {
+                mForecastStr = mIntent.getDataString();
+            }
+
+            if (mForecastStr != null) {
                 TextView detailForecast = (TextView) rootView.findViewById(R.id.detail_forecast);
-                detailForecast.setText(forecast);
+                detailForecast.setText(mForecastStr);
             }
 
             setHasOptionsMenu(true);
