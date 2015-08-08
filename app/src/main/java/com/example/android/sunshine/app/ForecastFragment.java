@@ -200,7 +200,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         } else {
             // cause error if app is run while device is sleeping
             // this shows today weather in detail fragment (of two pane) on startup
-            handler.sendEmptyMessage(INIT_DETAIL_FRAGMENT);
+            if (!mUseTodayLayout) {
+                handler.sendEmptyMessage(INIT_DETAIL_FRAGMENT);
+            }
         }
     }
 
