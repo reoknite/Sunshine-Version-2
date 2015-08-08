@@ -198,6 +198,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         if (mPosition != ListView.INVALID_POSITION) {
             mForecastListView.smoothScrollToPosition(mPosition);
         } else {
+            // cause error if app is run while device is sleeping
+            // this shows today weather in detail fragment (of two pane) on startup
             handler.sendEmptyMessage(INIT_DETAIL_FRAGMENT);
         }
     }
