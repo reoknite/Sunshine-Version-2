@@ -3,6 +3,7 @@ package com.example.android.sunshine.app;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -24,7 +25,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private ShareActionProvider mShareActionProvider;
     private String mDetailForecastStr;
     private static final int WEATHER_DETAIL_LOADER = 1;
+    private static final String URI_ARGUMENT_KEY = "uri_arg";
 
+    private Uri mUri;
     private TextView mDayView;
     private TextView mDateView;
     private TextView mHighView;
@@ -76,6 +79,14 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public DetailFragment() {
     }
 
+    public static DetailFragment newInstance(Uri contentUri) {
+        DetailFragment f = new DetailFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(URI_ARGUMENT_KEY, contentUri);
+        f.setArguments(args);
+        return f;
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         getLoaderManager().initLoader(WEATHER_DETAIL_LOADER, null, this);
@@ -85,6 +96,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            mUri = arguments.getParcelable(URI_ARGUMENT_KEY);
+        }
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
@@ -121,22 +137,30 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         mShareActionProvider.setShareIntent(shareIntent);
     }
 
+    void onLocationChanged(String newLocation) {
+        // replace the uri, since the location has changed
+        Uri uri = mUri;
+        if (null != uri) {
+            long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
+            mUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(newLocation, date);
+            getLoaderManager().restartLoader(WEATHER_DETAIL_LOADER, null, this);
+        }
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Intent intent = getActivity().getIntent();
-
-        if (intent == null) {
+        if (mUri != null) {
+            CursorLoader loader = new CursorLoader(
+                    getActivity(),
+                    mUri,
+                    DETAIL_FORECAST_COLUMNS,
+                    null,
+                    null,
+                    null);
+            return loader;
+        } else {
             return null;
         }
-
-        CursorLoader loader = new CursorLoader(
-                getActivity(),
-                intent.getData(),
-                DETAIL_FORECAST_COLUMNS,
-                null,
-                null,
-                null);
-        return loader;
     }
 
     @Override
