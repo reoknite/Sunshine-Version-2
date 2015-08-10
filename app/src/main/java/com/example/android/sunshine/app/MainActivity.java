@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -80,27 +79,7 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
             return true;
-        } else if (id == R.id.action_view_location) {
-            final String BASIC_GEO_PATH = "geo:0,0";
-            final String QUERY_PARAM = "q";
-
-            String location = Utility.getPreferredLocation(this);
-
-            Uri locationUri = Uri.parse(BASIC_GEO_PATH).buildUpon()
-                    .appendQueryParameter(QUERY_PARAM, location)
-                    .build();
-
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(locationUri);
-
-            if (intent.resolveActivity(getPackageManager()) != null) {
-                startActivity(intent);
-            } else {
-                Log.d(LOG_TAG, "Couldn't view this location:  " + location + ", no handler.");
-            }
-            return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 

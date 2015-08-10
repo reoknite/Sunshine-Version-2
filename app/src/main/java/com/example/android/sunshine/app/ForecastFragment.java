@@ -1,6 +1,7 @@
 package com.example.android.sunshine.app;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,6 +28,7 @@ import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
  * A forecast fragment containing a simple view.
  */
 public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    private static final String LOG_TAG = "ForecastFragment";
     private int mPosition = ListView.INVALID_POSITION;
     private ForecastAdapter mForecastAdapter;
     private ListView mForecastListView;
@@ -166,6 +169,27 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             case R.id.action_refresh:
                 fetchWeather();
                 return true;
+            case R.id.action_view_location:
+                if (mForecastAdapter != null) {
+                    Cursor c = mForecastAdapter.getCursor();
+                    if (c != null && c.moveToFirst()) {
+                        String lat = c.getString(COL_COORD_LAT);
+                        String lon = c.getString(COL_COORD_LONG);
+                        final String BASIC_GEO_PATH = "geo:" + lat + "," + lon;
+
+                        Uri locationUri = Uri.parse(BASIC_GEO_PATH);
+
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setData(locationUri);
+
+                        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                            startActivity(intent);
+                        } else {
+                            Log.d(LOG_TAG, "Couldn't view the location. No handler.");
+                        }
+                    }
+                    return true;
+                }
         }
 
         return super.onOptionsItemSelected(item);

@@ -430,6 +430,11 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             if (cVVector.size() > 0) {
                 // Student: call bulkInsert to add the weatherEntries to the database here
                 inserted = mContext.getContentResolver().bulkInsert(WeatherEntry.CONTENT_URI, cVVector.toArray(new ContentValues[cVVector.size()]));
+
+                getContext().getContentResolver().delete(
+                        WeatherEntry.CONTENT_URI,
+                        WeatherEntry.COLUMN_DATE + " <= ?",
+                        new String[]{Long.toString(dayTime.setJulianDay(julianStartDay - 1))});
             }
 
             Log.d(LOG_TAG, "Fetch Weather Complete. " + inserted + " Inserted");
